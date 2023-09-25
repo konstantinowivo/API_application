@@ -48,10 +48,10 @@ useEffect(() => {
 
   return (
     <main>
-    <h1>Consuming REST api tutorial</h1>
+    <h1>App para consumir API Rest</h1>
       <AddPost addPost={addPost}/>
       <section className="posts-container">
-      <h2>Posts</h2>
+      <h2>Posteos</h2>
         {posts.map((post) => 
           <Post 
             key={post.id} 
