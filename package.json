@@ -2,7 +2,7 @@
   "name": "react-proyect-03",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://ivokonstantinow.lat",
+  "homepage": "http://konstantinowivo.github.io/API_application",
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
