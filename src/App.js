@@ -5,18 +5,43 @@ import { TodoSearch } from './TodoSearch';
 import { TodoList } from './TodoList';
 import {CreateTodoButton} from './CreateTodoButton';
 
-const defaultTodos = [
-  { text: 'LALALA', completed: true},
-  { text: 'Jugar pelota', completed: true},
-  { text: 'Darle de comer a roma', completed: false},
-  { text: 'cambiarle el pañal a León', completed: false},
-  { text: 'jugar cod', completed: true}
-]
+// const defaultTodos = [
+//   { text: 'LALALA', completed: true},
+//   { text: 'Jugar pelota', completed: true},
+//   { text: 'Darle de comer a roma', completed: false},
+//   { text: 'cambiarle el pañal a León', completed: false},
+//   { text: 'jugar cod', completed: true}
+// ]
 
+// localStorage.setItem('TODOS_V1', JSON.stringify(defaultTodos))
+
+// localStorage.removeItem('TODOS_V1', defaultTodos)
+
+function useLocalStorage(itemNAme, initialValue){
+
+  let localStorageItem = localStorage.getItem(itemNAme)
+  let parsedItem;
+
+  if(!localStorageItem) {
+    localStorage.setItem(itemNAme, JSON.stringify(initialValue));
+    parsedItem = initialValue;
+  } else {
+    parsedItem = JSON.parse(localStorageItem) ;
+  }
+
+  const [item, setItem] = React.useState(parsedItem);
+  
+  const saveItem = (newItem) => {
+    localStorage.setItem(itemNAme, JSON.stringify(newItem));
+    setItem(newItem)
+  }
+
+  return [item, saveItem]
+}
 
 function App() {
   // Estos son estados en componente padre (estados de data original)
-  const [todos, setTodos] = React.useState(defaultTodos)
+  const [todos, saveTodos] = useLocalStorage('TODOS_V1', [])
   const [searchValue, setSearchValue] = React.useState('');
 
   // Estos son estados derivados(a partir del estado original, realizar un filtrado o cálculo ó lo que necesitemos)
@@ -45,7 +70,7 @@ function App() {
       (todo) => todo.text == text
     );
     newTodos[todoIndex].completed = true;
-    setTodos(newTodos);
+    saveTodos(newTodos);
   }
 
   const deleteTodo = (text) => {
@@ -53,7 +78,7 @@ function App() {
     // eslint-disable-next-line eqeqeq
     const todoIndex = newTodos.findIndex((todo) => todo.text == text);
     newTodos.splice(todoIndex, 1);
-    setTodos(newTodos);
+    saveTodos(newTodos);
   }
 
 return(

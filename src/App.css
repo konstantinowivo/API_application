@@ -68,7 +68,7 @@ textarea {
 
 .btn-submit:hover, .btn-submit:focus {
     transform: scale(1.1);
-     transition: all, 0.5s;
+    transition: all, 0.5s;
 }
 
 /* Posts */
