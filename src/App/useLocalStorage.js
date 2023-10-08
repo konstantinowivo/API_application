@@ -8,7 +8,7 @@ function useLocalStorage(itemNAme, initialValue){
     
     const [error, setError] = React.useState(false)
 
-React.useEffect(()=>{
+React.useEffect(() => {
     setTimeout(() =>{
         try{
             let localStorageItem = localStorage.getItem(itemNAme)
@@ -27,8 +27,9 @@ React.useEffect(()=>{
                 setLoading(false);
                 setError(true)
             }
-    }, 2000)
-})
+    }, 2000); 
+    // eslint-disable-next-line
+}, [])
     
 const saveItem = (newItem) => {
     localStorage.setItem(itemNAme, JSON.stringify(newItem));
