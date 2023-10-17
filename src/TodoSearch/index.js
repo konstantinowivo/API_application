@@ -1,23 +1,23 @@
-import React from 'react'; 
-import './todoSearch.css'
+    import React from 'react';
+    import { TodoContext } from '../TodoContext';
+    import './TodoSearch.css';
 
-function TodoSearch({searchValue, setSearchValue}){
-
-    // Declaramos el estado [nombre del estado, actualizador del estado]
-    // ver en App.js
-
-    // Por que nuestro estado va a ser un value?
-    // porque corresponde al valor de nuestro input
-return(
-    <input
-        placeholder='cortar cebolla'
-        className='TodoSearch'
+    function TodoSearch() {
+    const {
+        searchValue,
+        setSearchValue,
+    } = React.useContext(TodoContext);
+    
+    return (
+        <input
+        placeholder="Cortar cebolla"
+        className="TodoSearch"
         value={searchValue}
         onChange={(event) => {
-            setSearchValue(event.target.value)
+            setSearchValue(event.target.value);
         }}
-    />
-    )
-}
+        />
+    );
+    }
 
-export { TodoSearch }
+export { TodoSearch };

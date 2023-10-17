@@ -4,7 +4,7 @@
 
 
 // const [posts, setPosts] = useState([]);
-  
+
 // const fetchPosts = async() => {
 //   const response = await fetch("https://jsonplaceholder.typicode.com/posts?_limit=8");
 //   const data = await response.json();
