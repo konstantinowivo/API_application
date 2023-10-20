@@ -10,7 +10,7 @@
     
     return (
         <input
-        placeholder="Cortar cebolla"
+        placeholder="Buscar TODOS"
         className="TodoSearch"
         value={searchValue}
         onChange={(event) => {
