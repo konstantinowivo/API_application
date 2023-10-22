@@ -18,8 +18,8 @@ React.useEffect(() => {
                 localStorage.setItem(itemNAme, JSON.stringify(initialValue));
                 parsedItem = initialValue;
                 } else {
-                // eslint-disable-next-line no-unused-vars
                 parsedItem = JSON.parse(localStorageItem) ;
+                setItem(parsedItem)
                 }
         
             setLoading(false)}
