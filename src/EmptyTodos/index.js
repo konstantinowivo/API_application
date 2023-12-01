@@ -8,8 +8,10 @@ function EmptyTodos(){
     return(
     <div>
         <Grid container justifyContent="center" direction="column" alignItems="center">
-            <IoFileTray size={150} />
-            <p>No hay todos en la lista</p>
+            <IoFileTray className="IoFileTray" size={100}/>
+            <p className="EmptyTodos">
+                Lista de tareas vacía
+            </p>
         </Grid>
 
     </div>

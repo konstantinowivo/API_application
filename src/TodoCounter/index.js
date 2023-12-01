@@ -1,6 +1,6 @@
 import React from 'react';
 import { TodoContext } from '../TodoContext';
-import Font, { Text } from 'react-font'
+import Font from 'react-font'
 import './TodoCounter.css';
 
 function TodoCounter() {
@@ -10,9 +10,9 @@ function TodoCounter() {
     } = React.useContext(TodoContext);
     
     return (
-            <Font family='Roboto' weight={700}>
+            <Font family='Roboto'>
                 <h1 className="TodoCounter">
-                    Has completado <span>{completedTodos}</span> de <span>{totalTodos}</span> TODOs
+                    Has completado <span>{completedTodos}</span> de <span>{totalTodos}</span> tareas
                 </h1>
             </Font>
     );
