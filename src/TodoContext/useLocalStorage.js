@@ -8,7 +8,11 @@ function useLocalStorage(itemNAme, initialValue){
     
     const [error, setError] = React.useState(false)
 
+    const [text, setText] = React.useState("")
+
 React.useEffect(() => {
+
+
     setTimeout(() =>{
         try{
             let localStorageItem = localStorage.getItem(itemNAme)
@@ -21,6 +25,14 @@ React.useEffect(() => {
                 parsedItem = JSON.parse(localStorageItem) ;
                 setItem(parsedItem)
                 }
+            
+            if(localStorageItem.length > 1){
+                let text1 = "tareas"
+                setText(text1)
+            }else{
+                let text2 = "tarea"
+                setText(text2)
+            }
         
             setLoading(false)}
             catch{
@@ -40,7 +52,8 @@ const saveItem = (newItem) => {
         item,
         saveItem,
         loading,
-        error
+        error,
+        text,
     }
 }  
 

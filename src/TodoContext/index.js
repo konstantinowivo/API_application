@@ -17,6 +17,7 @@ const TodoContext = React.createContext();
         todo => !!todo.completed
     ).length;
     const totalTodos = todos.length;
+    
 
     const searchedTodos = todos.filter(
         (todo) => {
