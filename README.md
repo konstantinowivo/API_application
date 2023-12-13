@@ -53,6 +53,7 @@ Carpeta src/TodoContext
 
 
 archivo src/TodoContext/useLocalStorage.js:
+(imagen de la ubicación del archivo)
 
 ``` js:
 
@@ -123,22 +124,22 @@ En sus dos parámetros se determina:
 
 
 
-En sus hooks de estados derivados se determina:
+Hooks de estados derivados:
 
 ``` js:
     const [item, setItem] = React.useState(initialValue);
 ``` 
-estados de las tareas guardadas Traer data de localStorage o setearla si es necesario
+estados de las tareas guardadas. Traer data de localStorage o setearla si es necesario, cómo estado incial del componente item predeterminamos "initialValue", que en el posterior llamado de la función useLocalstorage(), vamos a asignarle "TODOS_V1" la llave de nuestros items de localStorage. 
 
 ``` js:
     const [loading, setLoading] = React.useState(true);
 ```
-estado de carga (loading skeletons)
+estado de carga (loading skeletons), seteamos true como valor inicial, luego de dos segundos y contando con una petición exitosa, cambiaremos su estado a "false"
 
 ``` js:
     const [error, setError] = React.useState(false)
 ``` 
-estado de error, en caso de que la solicitud a localStorage no sea exitosa
+estado de error, en caso de que la solicitud a localStorage no sea exitosa, caso contrario su estado se determinará en "true"
 
 
 
@@ -179,7 +180,7 @@ const saveItem = (newItem) => {
 
 Se establece la lógica dentro del contexto de la función nativa setTimeout(), que dará lugar por 2 segundos, al estado de carga (loading), estado contenedor de los loading skeletons. Esto nos brindará tiempo suficiente para realizar el pedido de data (item) alojados en la API localStorage(), sin necesidad de que el usuario observe un sitio vacío de contendio durante dicho proceso.
 Mediante try y catch se determina el estado de éxito o error de dicha solicitud.
-Por último, la función flecha "saveItem" controla la lógica de guardado de nuevas tareas (objetos), en localStorage()
+Por último, la función flecha "saveItem" controla la lógica de guardado de nuevas tareas (objetos), en localStorage.
 
 Retorno de la función useLocalStorage():
 
@@ -193,47 +194,295 @@ return {
     }
 ```
 
-* item: Estado de las tareas guardadas
+* item: Estado de las tareas
 
-* saveItem: Función felcha que determina la lógica de guardado en localStorage()
+* saveItem: Función felcha que determina la lógica de guardado en localStorage
 
 * loading: Estado de carga de los componentes
 
 * error: Estado de error de los componentes
 
+
+
+
+
 archivo src/TodoContext/index.js:
+(imagen de la ubicación del archivo)
+
+``` js:
+import React from 'react';
+import { useLocalStorage } from './useLocalStorage';
+
+const TodoContext = React.createContext();
+
+    function TodoProvider({ children }) {
+    const {
+        item: todos,
+        saveItem: saveTodos,
+        loading,
+        error,
+    } = useLocalStorage('TODOS_V1', []);
+    const [searchValue, setSearchValue] = React.useState('');
+    const [openModal, setOpenModal] = React.useState(false);
+
+    const completedTodos = todos.filter(
+        todo => !!todo.completed
+    ).length;
+    const totalTodos = todos.length;
+    
+
+    const searchedTodos = todos.filter(
+        (todo) => {
+        const todoText = todo.text.toLowerCase();
+        const searchText = searchValue.toLowerCase();
+        return todoText.includes(searchText);
+        }
+    );
+
+    const addTodo = (text) => {
+        const newTodos = [...todos];
+        newTodos.push({
+            text,
+            completed: false,
+        });
+        saveTodos(newTodos);
+    };
+
+    const completeTodo = (text) => {
+        const newTodos = [...todos];
+        const todoIndex = newTodos.findIndex(
+        (todo) => todo.text === text
+        );
+        newTodos[todoIndex].completed = true;
+        saveTodos(newTodos);
+    };
+
+    const deleteTodo = (text) => {
+        const newTodos = [...todos];
+        const todoIndex = newTodos.findIndex(
+        (todo) => todo.text === text
+        );
+        newTodos.splice(todoIndex, 1);
+        saveTodos(newTodos);
+    };
+    
+    return (
+        <TodoContext.Provider value={{
+        loading,
+        error,
+        completedTodos,
+        totalTodos,
+        searchValue,
+        setSearchValue,
+        searchedTodos,
+        completeTodo,
+        deleteTodo,
+        openModal,
+        setOpenModal,
+        addTodo,
+    }}>
+    {children}
+    </TodoContext.Provider>
+);
+}
+
+export { TodoContext, TodoProvider };
+```
+
+importamos el componente useLocalStorage():
+
+``` js:
+import { useLocalStorage } from './useLocalStorage';
+```
 
 
-A primera vista se puede observar la constante TodoContext con el valor asignado React.createContext(), una API que nos permitirá generar un objeto de contexto de props, con el cuál podremos nutrir de props a cualquier componente de nuestra aplicación, sin importar el orden jerárquico de componentes padres e hijos. (ver más adelante)
+Asignamos la constante "TodoContext" a la API React.createContext(), lo que nos permitirá generar un objeto de contexto de props, con el cuál podremos nutrir de props a cualquier componente de nuestra aplicación, sin importar el orden jerárquico de componentes padres e hijos. (ver más adelante):
 
-A continuación el componente <TodoProvider />
+```js:
+const TodoContext = React.createContext();
+```
 
-Lo primero que vemos en la función es una constante de objetos con todos los valores generados en el archivo importado ./useLocalStorage.js, algunos de ellos se encuentran renombrados, como por ejemplo es el caso de la variable "item" renombrada por "todos". Todos ellos asignados al uso de localStorage(llave valor)
+
+Función/componente TodoProvider():
+
+``` js:
+function TodoProvider({ children }) {
+    const {
+        item: todos,
+        saveItem: saveTodos,
+        loading,
+        error,
+    } = useLocalStorage('TODOS_V1', []);
+    const [searchValue, setSearchValue] = React.useState('');
+    const [openModal, setOpenModal] = React.useState(false);
+
+    const completedTodos = todos.filter(
+        todo => !!todo.completed
+    ).length;
+    const totalTodos = todos.length;
+    
+
+    const searchedTodos = todos.filter(
+        (todo) => {
+        const todoText = todo.text.toLowerCase();
+        const searchText = searchValue.toLowerCase();
+        return todoText.includes(searchText);
+        }
+    );
+
+    const addTodo = (text) => {
+        const newTodos = [...todos];
+        newTodos.push({
+            text,
+            completed: false,
+        });
+        saveTodos(newTodos);
+    };
+
+    const completeTodo = (text) => {
+        const newTodos = [...todos];
+        const todoIndex = newTodos.findIndex(
+        (todo) => todo.text === text
+        );
+        newTodos[todoIndex].completed = true;
+        saveTodos(newTodos);
+    };
+
+    const deleteTodo = (text) => {
+        const newTodos = [...todos];
+        const todoIndex = newTodos.findIndex(
+        (todo) => todo.text === text
+        );
+        newTodos.splice(todoIndex, 1);
+        saveTodos(newTodos);
+    };
+    
+    return (
+        <TodoContext.Provider value={{
+        loading,
+        error,
+        completedTodos,
+        totalTodos,
+        searchValue,
+        setSearchValue,
+        searchedTodos,
+        completeTodo,
+        deleteTodo,
+        openModal,
+        setOpenModal,
+        addTodo,
+    }}>
+    {children}
+    </TodoContext.Provider>
+);
+}
+```
+
+
+Lo primero que vemos en la función es una constante de objetos con todos los valores generados (estados y props) en el archivo importado
+./useLocalStorage.js, algunos de ellos se encuentran renombrados, como por ejemplo es el caso de la variable "item" renombrada por "todos". Todos ellos asignados al uso de localStorage("TODOS_V1, []"), bajo su sintaxis de propiedades: llave, valor.
 
 
 Lógica de estados:
 
+``` js:
+    const [searchValue, setSearchValue] = React.useState('');
+```
+
 * Estado de valor de búsqueda (searchValue), con un string vacío como estado original.
 
-* Estado del modal (openModal), con "false" como estado original.
+```js:
+    const [openModal, setOpenModal] = React.useState(false);
+```
+
+* Estado del modal (openModal), con "false" como estado original, escuchando el evento click en el componente <CreateTodoButton/>, se actualiza su
+estado a "true"
 
 
-Lógica de componentes:
+Lógica de funciones:
 
-* Tareas completadas (completedTodos) --> consumido en 
 
-* Buscador de tareas (searchedTodos) --> consumido en
+función flecha "completedTodos", consumida en <TodoCounter/>
 
-* Añadir tareas (addTodos) --> consumido en 
+Props:
 
-* Marcar tareas cómo completadas (completeTodos) --> consumido en
+* completedTodos
 
-* Eliminar tareas (deleteTodos) --> consumido en 
+* totalTodos
+
+``` js:
+    const completedTodos = todos.filter(
+        todo => !!todo.completed
+    ).length;
+    const totalTodos = todos.length;
+```
+Aplicamos la propiedad .filter al array "todos" y por cada objeto del array:
+
+1) Contabilizamos la cantidad de objetos que cuenten con la propiedad "completed", dentro del array.
+
+2) Contabilizamos la cantidad de objetos que contenga el array.
+
+
+función flecha "searchedTodos" consumida en <TodoSearch/>
+
+```js:
+    const searchedTodos = todos.filter(
+        (todo) => {
+        const todoText = todo.text.toLowerCase();
+        const searchText = searchValue.toLowerCase();
+        return todoText.includes(searchText);
+        }
+    );
+```
+
+Función flecha con la cuál aplicamos la propiedad .filter al array "todos" y por cada objeto del array:
+
+1) Aplicamos la propiedad .toLowerCase(), a los valores alojados dentro de la propiedad "text" de nuestros objetos y los declaramos dentro de la variable "todoText"
+
+2) Aplicamos la propiedad .toLowerCase(), al estado actual del estado "searchValue" y lo declaramos dentro de la variable "searchText"
+
+3) Retornamos el resultado de aplicar la propiedad .includes a la variable "todoText" comparando el valor de la misma con el estado de "searchText". Si dicho parámetro coincide, la propiedad .includes nos devolverá un valor boolean "true" y podremos renderizar dicho resultado en pantalla.
+
+
+Función flecha "addTodo" consumida en <TodoForm />
+
+``` js:
+    const addTodo = (text) => {
+        const newTodos = [...todos];
+        newTodos.push({
+            text,
+            completed: false,
+        });
+        saveTodos(newTodos);
+    };
+```
+1) Creamos la función flecha "addTodo" con "text" cómo parámetro de la misma.
+
+2) Generamos la constante "newTodos" y declaramos cómo valor una copia del array "todos"
+
+3) Pusheamos el objeto generado dentro de la constante newTodos, con dos propiedades "text" (parámetro de la función) e inicializamos su propiedad "completed" cómo "false"
+
+4) Por ultimo retornamos un llamado a la función "saveTodos" (saveItem renombrada) y le pasamos cómo parámetro "newTodos"
+
+
+
+Función flecha "completeTodo" consumida en 
+
+``` js:
+    const completeTodo = (text) => {
+        const newTodos = [...todos];
+        const todoIndex = newTodos.findIndex(
+        (todo) => todo.text === text
+        );
+        newTodos[todoIndex].completed = true;
+        saveTodos(newTodos);
+    };
+```
 
 
 Return de la función TodoProvider():
 
-Se determina a la constante TodoContext como componente (<TodoContext></TodoContext>) y le añadimos la propiedad .Provider (<TodoContext.Provider></TodoContext.Provider>), lo cual nos permitirá asignar los valores de contexto que vamos a pasar a los demás componentes consumidores (<TodoContext.Provider value={{loading, error, completedTodos...}}>).
+Se determina a la constante TodoContext como componente (<TodoContext></TodoContext>) y añadimos la propiedad .Provider (<TodoContext.Provider></TodoContext.Provider>), lo cual nos permitirá asignar los valores de contexto que vamos a pasar a los demás componentes consumidores (<TodoContext.Provider value={{loading, error, completedTodos...}}>).
 Dentro del componente TodoContext anidamos la propiedad {children} (<TodoContext.Provider value={{loading, error, completedTodos...}}>{children}<TodoContext.Provider />) que será utilizada cómo parametro del componente <function TodoProvider({children})>, esto nos permitirá manipular y personalizar el contenido que renderizamos dentro de cada componente que utilice dichas props, no sólo valores, sino también JSX
 
 
